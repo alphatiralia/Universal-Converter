@@ -35,6 +35,12 @@ class Temperature(object):
     def __init__(self):
         super(Temperature, self).__init__()
         self.create_widgets()
+
+class Speed(object):
+    """docstring for Speed"""
+    def __init__(self):
+        super(Speed, self).__init__()
+        self.create_widgets()
         
 def printer():
     values = value.get()

@@ -31,13 +31,13 @@ class Force(object):
         return printer
 
 class Temperature(object):
-    """docstring for Temperature"""
+    """calculate input to temparature not add """
     def __init__(self):
         super(Temperature, self).__init__()
         self.create_widgets()
 
 class Speed(object):
-    """docstring for Speed"""
+    """calculate input to speed not add """
     def __init__(self):
         super(Speed, self).__init__()
         self.create_widgets()

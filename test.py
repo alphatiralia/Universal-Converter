@@ -29,6 +29,13 @@ class Force(object):
         for i in range(len(unit_comp_main)):
             printer += str(value_comp_main / unit_comp_main[i]) + ' ' + str(unit[i]) + "\n"
         return printer
+
+class Temperature(object):
+    """docstring for Temperature"""
+    def __init__(self):
+        super(Temperature, self).__init__()
+        self.create_widgets()
+        
 def printer():
     values = value.get()
     units = unit.get()

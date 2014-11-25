@@ -1,5 +1,5 @@
 '''x'''
-def test:
+def test():
     print "hello"
 
 test()

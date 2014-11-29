@@ -133,7 +133,7 @@ class Force(object):
         super(Force, self).__init__()
         self.value = value
         self.old_unit = old_unit
-<<<<<<< HEAD:test.py
+#<<<<<<< HEAD:test.py
         self.new_unit = new_unit
     def change_old_unit(self):
         """Return the converted value and new unit."""
@@ -401,11 +401,48 @@ class Temperature(object):
     def __init__(self):
         super(Temperature, self).__init__()
         self.create_widgets()
+        OptionMenu(top, self.unit, "Celsius", "Fahrenheit", "Kelvin", "Rankine",
+                    "Reaumur", "Newton", "Romer", "Delisle").pack()
+        unit_comp = {"Celsius": self.v.get() * 1.0,
+                        "Fahrenheit": (self.v.get() - 32) / 1.8,
+                        "Kelvin": self.v.get() - 273.15,
+                        "Reaumur": self.v.get() / 0.8,
+                        "Rankine": (self.v.get() - 491.67) / 1.8,
+                        "Newton": self.v.get() / 0.33,
+                        "Romer": (self.v.get() - 7.5) / 0.525,
+                        "Delisle": 100 - self.v.get() * 0.66666667}
 
 class Speed(object):
     """calculate input to speed not add """
     def __init__(self):
         super(Speed, self).__init__()
+        self.create_widgets()
+        OptionMenu(top, self.unit, "Mach number", "Nm/24hr",
+                    "centimeters/minute", "centimeters/second", "feet/hour",
+                    "feet/minute", "feet/second", "inches/minute",
+                    "inches/second", "kilometers/hour", "kilometers/second",
+                    "knots", "meters/hour", "meters/minute", "meters/second",
+                    "miles/hour", "miles/minute", "miles/second",
+                    "nautical miles/hour", "speed of light", "speed of sound",
+                    "yards/hour", "yards/minute", "yards/second").pack()
+        unit_comp = {"Mach number": 340.2933, "Nm/24hr": 0.021435,
+                        "centimeters/minute": 0.000167, "centimeters/second": 0.01,
+                        "feet/hour": 8.5e-05, "feet/minute": 0.00508,
+                        "feet/second": 0.3048, "inches/minute": 0.000423,
+                        "inches/second": 0.0254, "kilometers/hour": 0.277778,
+                        "kilometers/second": 1000.0, "knots": 0.514444,
+                        "meters/hour": 0.000278, "meters/minute": 0.016667,
+                        "meters/second": 1.0, "miles/hour": 0.44704,
+                        "miles/minute": 26.8224, "miles/second": 1609.344,
+                        "nautical miles/hour": 0.514444,
+                        "speed of light": 299790000.0, "speed of sound": 343.0,
+                        "yards/hour": 0.000254, "yards/minute": 0.01524,
+                        "yards/second": 0.9144}
+
+class Volume(object):
+    """docstring for Volume"""
+    def __init__(self):
+        super(Volume, self).__init__()
         self.create_widgets()
         
 def printer():

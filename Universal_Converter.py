@@ -4,8 +4,7 @@ use to covert one unit to other unit in each measurement.
 ===========================================================
 By  Phanuwat Sutthinarodom 56070102
     Natthanan Kunchokwanit 57070035
-===========================================================
-Last Update : 24/11/2557"""
+==========================================================="""
 from Tkinter import *
 import tkMessageBox, tkFont, ttk
 

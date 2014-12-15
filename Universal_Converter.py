@@ -7,6 +7,7 @@ Author: Panuwat Sutthinarodom 56070102
         Natthanan Kunchokwanit 57070035
 Language: Python 2.7
 ===========================================================
+Last Update: 15/12/2557
 """
 from Tkinter import *
 import tkMessageBox, ttk
@@ -19,19 +20,16 @@ class Application(Frame):
 
     def create_menubar(self):
         """Create the menubar"""
-        #Create the bar
         self.menubar = Menu(self)
         #Create about menu
         about_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="About", menu=about_menu)
-        #Create sub of about menu
         about_menu.add_command(label="About this program", command=self.aboutmenu)
         about_menu.add_separator() #Create the separator between 2 sub class
         about_menu.add_command(label="Creator", command=self.creator)
         #Create help menu
         help_menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Help", menu=help_menu)
-        #Create sub of help menu
         help_menu.add_command(label="How to use the program", command=self.helpmenu)
         self.master.config(menu=self.menubar)
 
@@ -55,47 +53,63 @@ class Application(Frame):
     def create_widgets(self):
         """Create widgets in the window"""
         root.title("Universal Converter")
-        root.resizable(False, False) #The windows can't resize
-        Label(root, text=" Universal Converter ", font=("Trebuchet MS", 20, "bold")).grid(row=0, column=0, columnspan=4, ipadx=20, ipady=20, pady=10)
+        root.resizable(False, False)
+        root.config(bg="white")
+        head_frame = Frame(root, bd=3, bg="Navy", relief=GROOVE)
+        Label(head_frame, text="UNIVERSAL CONVERTER", font=("Trebuchet MS", 24, "bold"), fg="White", bg="Navy").pack(pady=50)
+        head_frame.grid(row=0, column=0, columnspan=4, ipadx=20, sticky="ew")
+        Label(root, text=" Choose the Converter ", font=("Trebuchet MS", 16, "bold"), fg="Navy", bg="White").grid(row=2, column=0, columnspan=4, ipadx=20, ipady=20)
+        #Create button
+        button_frame = Frame(root, bd=5, bg="Navy", relief=FLAT)
         self.measurements_list = ["Angle", "Area", "Bit Byte", "Density", "Electric Current", "Energy", "Force", "Fuel Consumption", "Length", "Mass", "Power", "Pressure", "Speed", "Temperature", "Time", "Volume"]
         self.measurements_dict = {"Angle": self.angle, "Area": self.area, "Bit Byte": self.bitbyte, "Density": self.density, "Electric Current": self.electriccurrent, "Energy": self.energy, "Force": self.force, "Fuel Consumption": self.fuelconsumption, "Length": self.length, "Mass": self.mass, "Power": self.power, "Pressure": self.pressure, "Speed": self.speed, "Temperature": self.temperature, "Time": self.time, "Volume": self.volume}
-        self.measurements = StringVar()
         for i in range(16):
-            Button(root, text=self.measurements_list[i], font=("Trebuchet MS", 12), width=13, command=self.measurements_dict[self.measurements_list[i]], relief=GROOVE).grid(row=i/4+1, column=i%4, ipady=15, ipadx=15, padx=3, pady=3)
+            self.button = Button(button_frame, text=self.measurements_list[i], font=("Trebuchet MS", 12), width=13, fg="Navy", bg="White", relief=FLAT, overrelief=SOLID, bd=5, activebackground="Navy", activeforeground="White", command=self.measurements_dict[self.measurements_list[i]])
+            self.button.grid(row=i/4+4, column=i%4, ipady=15, ipadx=15, padx=2, pady=2)
+        button_frame.grid(row=3, column=0, columnspan=4, sticky="we", padx=5, pady=5)
         root.protocol("WM_DELETE_WINDOW", self.callback) #When user will quit, program will show you the messagebox
 
     def convert_window(self, measurements, main_unit, unit):
         """Create widget to converter window"""
-        top = self.top = Toplevel() #Create the new windows
+        top = self.top = Toplevel(bg="Navy") #Create the new windows
         top.title(measurements) #window name
-        #Set the size of window
-        top.geometry("400x500")
+        style = ttk.Style()
+        style.map("TCombobox", fieldbackground=[("readonly", "Navy")])
+        style.configure("TCombobox", foreground="White", bg="Navy")
+        style.configure("TSeparator", background="Navy")
         #Create the head label
-        Label(top, text=measurements + " Converter", font=("Trebuchet MS", 20, "bold")).pack(pady=10)
-        Frame(top, height=1, bd=0, background="black", relief=SUNKEN).pack(padx=10, fill=X)
+        Label(top, text=measurements + " Converter", font=("Trebuchet MS", 20, "bold"), fg="white", bg="Navy").pack(pady=20)
+        outer_input_frame = Frame(top, bg="White")
+        input_frame = Frame(outer_input_frame, bg="White")
         #Set text box to get input from user
-        Label(top, text="Enter the current value", font=("Trebuchet MS", 11)).pack(pady=10)
-        self.v = StringVar()
-        self.value = Entry(top, textvariable=self.v)
-        self.value.pack()  
-        #Create button for user to choose the unit
-        Label(top, text="Select the current unit", font=("Trebuchet MS", 11)).pack(pady=10)
-        self.dropdown = ttk.Combobox(top, state="readonly", values=unit)
-        self.dropdown.pack()
+        Label(input_frame, text=" Enter the value", font=("Trebuchet MS", 11), fg="Navy", bg="White").grid(row=0, column=0, pady=5)
+        self.v = DoubleVar()
+        self.v.set(0)
+        self.value = Entry(input_frame, textvariable=self.v, bg="Navy", fg="White")
+        self.value.grid(row=1, column=0, padx=15, pady=5)
+        ttk.Separator(input_frame, orient="horizontal").grid(row=0, column=1, rowspan=2, sticky="ns")
+        #Create button for user to choose the unit        
+        Label(input_frame, text="Select the unit", font=("Trebuchet MS", 11), fg="Navy", bg="White").grid(row=0, column=2, padx=20, pady=5)
+        self.dropdown = ttk.Combobox(input_frame, state="readonly", values=unit, style="TCombobox")
+        self.dropdown.grid(row=1, column=2, padx=15, pady=5)
         self.dropdown.set(main_unit)
-        #Create the separator between input and output section
-        Frame(top, height=2, bd=0, relief=SUNKEN).pack(fill=X, ipady=10)
-        Frame(top, height=2, bd=1, relief=SUNKEN).pack(fill=X)
-        #Create the scroll bar
-        xscrollbar = self.scrollbar = Scrollbar(top, orient=HORIZONTAL)
-        xscrollbar.pack(side=BOTTOM, fill=X)
-        yscrollbar = self.scrollbar = Scrollbar(top)
+        input_frame.pack(pady=20)
+        outer_input_frame.pack(pady=10, padx=20)
+        #Create text bar       
+        text_frame = Frame(top, bd=3, relief=SUNKEN)
+        yscrollbar = self.scrollbar = Scrollbar(text_frame)
         yscrollbar.pack(side=RIGHT, fill=Y)
-        #Create text box to show output
-        self.text = Text(top, width=45 , wrap=NONE, yscrollcommand=yscrollbar.set, xscrollcommand=xscrollbar.set)
+        xscrollbar = self.scrollbar = Scrollbar(text_frame, orient=HORIZONTAL)
+        xscrollbar.pack(side=BOTTOM, fill=X)
+        self.text = Text(text_frame, wrap=NONE, width=45, height=15, yscrollcommand=yscrollbar.set, xscrollcommand=xscrollbar.set)
         self.text.pack(fill=BOTH, expand=YES)
         yscrollbar.config(command=self.text.yview)
         xscrollbar.config(command=self.text.xview)
+        text_frame.pack(fill=BOTH, side=BOTTOM, expand=YES, padx=5, pady=5)
+        self.top.bind("<Key>", {"Angle": self.convert_angle, "Area": self.convert_area, "Bit Byte": self.convert_bitbyte, "Density": self.convert_density, "Electric Current": self.convert_electriccurrent, "Energy": self.convert_energy, "Force": self.convert_force, "Fuel Consumption": self.convert_fuelconsumption, "Length": self.convert_length, "Mass": self.convert_mass, "Power": self.convert_power, "Pressure": self.convert_pressure, "Speed": self.convert_speed, "Temperature": self.convert_temperature, "Time": self.convert_time, "Volume": self.convert_volume}[measurements])
+        self.dropdown.bind("<<ComboboxSelected>>", {"Angle": self.convert_angle, "Area": self.convert_area, "Bit Byte": self.convert_bitbyte, "Density": self.convert_density, "Electric Current": self.convert_electriccurrent, "Energy": self.convert_energy, "Force": self.convert_force, "Fuel Consumption": self.convert_fuelconsumption, "Length": self.convert_length, "Mass": self.convert_mass, "Power": self.convert_power, "Pressure": self.convert_pressure, "Speed": self.convert_speed, "Temperature": self.convert_temperature, "Time": self.convert_time, "Volume": self.convert_volume}[measurements])
+        self.top.bind("<Control_L>", self.copy)
+        self.top.bind("<Control_R>", self.copy)
 
     def print_text(self, printer):
         """Print text"""
@@ -104,11 +118,13 @@ class Application(Frame):
         self.text.insert(0.0, printer)
         self.text.configure(state="disabled")
 
+    def copy(self, event):
+        """Make text dont change"""
+        return
+
     def angle(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Angle", "degree", ["arcminute", "arcsecond", "circle", "degree", "gon", "gradian", "mil(Nato)", "mil(Soviet Union)", "mil(Sweden)", "octant", "quadrant", "radian", "revolution", "sextant", "sign", "turn"])
-        self.top.bind("<Key>", self.convert_angle)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_angle)
 
     def convert_angle(self, event):
         """Return the converted value and new unit."""
@@ -128,8 +144,6 @@ class Application(Frame):
     def area(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Area", "square meters", ["acres", "ares", "circular inches", "hectares", "hides", "roods", "square centimeters", "square feet(US & UK)", "square feet(US survey)", "square inches", "square kilometers", "square meters", "square miles", "square millimeters", "square of timber", "square rods or poles", "square yards", "townships"])
-        self.top.bind("<Key>", self.convert_area)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_area)
 
     def convert_area(self, event):
         """Return the converted value and new unit."""
@@ -149,8 +163,6 @@ class Application(Frame):
     def bitbyte(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Bit Byte", "megabytes", ["bits", "bytes", "exabits", "exabytes", "gigabits", "gigabytes", "kilobits", "kilobytes", "megabits", "megabytes", "petabits", "petabytes", "terabits", "terabytes"])
-        self.top.bind("<Key>", self.convert_bitbyte)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_bitbyte)
 
     def convert_bitbyte(self, event):
         """Return the converted value and new unit."""
@@ -170,8 +182,6 @@ class Application(Frame):
     def density(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Density", "kilograms/liter", ["grains/gallon(UK)", "grains/gallon(US)", "grams/cubic centimeters", "grams/liter", "grams/millimeters", "kilograms/cubic meters", "kilograms/liter", "megagrams/cubic meter", "milligrams/liter", "milligrams/millimeters", "ounces/cubic inch", "ounces/gallon(UK)", "ounces/gallon(US)", "pounds/cubic foot", "pounds/cubic inch", "pounds/gallon(UK)", "pounds/gallon(US)", "slugs/cubic foot", "tonnes/cubic meter", "tons(UK)/cubic yard", "tons(US)/cubic yard"])
-        self.top.bind("<Key>", self.convert_density)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_density)
 
     def convert_density(self,event):
         """Return the converted value and new unit."""
@@ -191,8 +201,6 @@ class Application(Frame):
     def electriccurrent(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Electric Current", "ampere", ["EMU of current", "ESU of current", "abampere", "ampere", "biot", "centiampere", "coulomb/second", "franklin/second", "gaussian electric current", "gigaampere", "gilbert", "kiloampere", "megaampere", "microampere", "milliamp", "milliampere", "nanoampere", "picoampere", "siemens volt", "statampere", "teraampere", "volt/ohm", "watt/volt", "weber/henry"])
-        self.top.bind("<Key>", self.convert_electriccurrent)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_electriccurrent)
 
     def convert_electriccurrent(self, event):
         try:
@@ -211,8 +219,6 @@ class Application(Frame):
     def energy(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Energy", "joules", ["Btu(mean)", "Btu(th)", "calories(15C)", "calories(20C)", "calories(IT)", "calories(food)", "calories(mean)", "calories(th)", "centigrade heat units", "electron volts", "ergs", "foot poundals", "foot-pound force", "gigajoules", "horsepower hours", "inch-pound force", "joules", "kilocalories(IT)", "kilocalories(th)", "kilogram-force meters", "kilojoules", "kilowatt hours", "megajoules", "newton meters", "therms", "watt hours", "watt seconds"])
-        self.top.bind("<Key>", self.convert_energy)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_energy)
 
     def convert_energy(self, event):
         """Return the converted value and new unit."""
@@ -232,8 +238,6 @@ class Application(Frame):
     def force(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Force", "newtons", ["dynes", "kilograms force", "kilonewtons", "kips", "meganewtons", "newtons", "poundals", "pounds force", "sthene", "tonnes force", "tons force(UK)", "tons force(US)"])
-        self.top.bind("<Key>", self.convert_force)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_force)
 
     def convert_force(self, event):
         """Return the converted value and new unit."""
@@ -253,8 +257,6 @@ class Application(Frame):
     def fuelconsumption(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Fuel Consumption", "liters/100 kilometer", ["car(2014 US Average)", "gallon(UK)/100 miles", "gallon(US)/100 miles", "kilometer/liter", "liters/100 kilometer", "liters/meter", "miles/gallon(UK)", "miles/gallon(US)"])
-        self.top.bind("<Key>", self.convert_fuelconsumption)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_fuelconsumption)
 
     def convert_fuelconsumption(self, event):
         """Return the converted value and new unit."""
@@ -277,8 +279,6 @@ class Application(Frame):
     def length(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Length", "meters", ["Scandinavian mile", "angstroms", "au", "barleycorns", "cables", "centimeters", "chains", "decimeters", "ells", "ems", "fathoms", "feet(UK & US)", "feet(US survey)", "furlongs", "hands", "hectometers", "inches", "kilometers", "links", "light years", "meters", "micrometers", "mil", "miles(UK & US)", "miles(nautical, UK)", "miles(nautical, international)", "millimeters", "nanometers", "parsecs", "pica", "picometers", "rods", "spans", "thou", "yards"])
-        self.top.bind("<Key>", self.convert_length)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_length)
 
     def convert_length(self, event):
         """Return the converted value and new unit."""
@@ -298,8 +298,6 @@ class Application(Frame):
     def mass(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Mass", "kilograms", ["Earth masses", "Solar masses", "carats", "cental", "decagrams", "femtograms", "grains", "grams", "hectograms", "hundredweights", "kilograms", "kilotonnes", "megatonnes", "micrograms", "milligrams", "nanograms", "ounces(US & UK)", "ounces(precious metals)", "picograms", "pounds(US & UK)", "pounds(precious metals)", "slugs", "stones", "tonnes(metric)", "tons(UK)", "tons(US)"])
-        self.top.bind("<Key>", self.convert_mass)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_mass)
 
     def convert_mass(self, event):
         """Return the converted value and new unit."""
@@ -319,8 +317,6 @@ class Application(Frame):
     def power(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Power", "joules/second", ["Btu/hour", "Btu/minute", "Btu/second", "calories(th)/hour", "calories(th)/minute", "calories(th)/second", "foot pounds-force/minute", "foot pounds-force/second", "gigawatts", "horsepowers(electric)", "horsepowers(international)", "horsepowers(metric)", "horsepowers(water)", "joules/hour", "joules/minute", "joules/second", "kilocalories(th)/hour", "kilocalories(th)/minute", "kilogram-force meters/hour", "kilograms-force meters/minute", "kilowatts", "megawatts", "petawatts", "terawatts", "watts"])
-        self.top.bind("<Key>", self.convert_power)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_power)
 
     def convert_power(self, event):
         """Return the converted value and new unit."""
@@ -340,8 +336,6 @@ class Application(Frame):
     def pressure(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Pressure", "pascals", ["atm", "bars", "centimeters mercury", "centimeters water", "feet of water", "hectopascals", "inches of mercury", "inches of water", "kilogram-force/sq.centimeter", "kilogram-force/sq.meter", "kilonewtons/sq.meter", "kilonewtons/sq.millimeter", "kilopascals", "kips/sq.inch", "meganewtons/sq.meter", "meganewtons/sq.millimeter", "meters of water", "millibars", "millimeters of mercury", "millimeters of water", "newtons/sq.centimeter", "newtons/sq.meter", "newtons/sq.millimeter", "pascals", "poundals/sq.foot", "pounds-force/sq.foot", "pounds-force/sq.inch", "tonnes-force/sq.cm", "tonnes-force/sq.meter", "tons(UK)-force/sq.foot", "tons(UK)-force/sq.inch", "tons(US)-force/sq.foot", "tons(US)-force/sq.inch", "torr"])
-        self.top.bind("<Key>", self.convert_pressure)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_pressure)
 
     def convert_pressure(self, event):
         """Return the converted value and new unit."""
@@ -361,8 +355,6 @@ class Application(Frame):
     def speed(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Speed", "meters/second", ["Mach number", "Nm/24hr", "centimeters/minute", "centimeters/second", "feet/hour", "feet/minute", "feet/second", "inches/minute", "inches/second", "kilometers/hour", "kilometers/second", "knots", "meters/hour", "meters/minute", "meters/second", "miles/hour", "miles/minute", "miles/second", "nautical miles/hour", "speed of light", "speed of sound", "yards/hour", "yards/minute", "yards/second"])
-        self.top.bind("<Key>", self.convert_speed)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_speed)
 
     def convert_speed(self, event):
         """Return the converted value and new unit."""
@@ -382,8 +374,6 @@ class Application(Frame):
     def temperature(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Temperature", "Celsius", ["Celsius", "Fahrenheit", "Kelvin", "Rankine", "Reaumur", "Newton", "Romer", "Delisle"])
-        self.top.bind("<Key>", self.convert_temperature)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_temperature)
 
     def convert_temperature(self, event):
         """Return the converted value and new unit."""
@@ -404,8 +394,6 @@ class Application(Frame):
     def time(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Time", "seconds", ["centuries", "days", "decades", "femtoseconds", "fortnights", "hours", "microseconds", "millenia", "milliseconds", "minutes", "months(Common)", "months(Synodic)", "nanoseconds", "picoseconds", "quarters(Common)", "seconds", "shakes", "weeks", "years(Average Gregorian)", "years(Common)", "years(Julian)", "years(Leap)", "years(Tropical)"])
-        self.top.bind("<Key>", self.convert_time)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_time)
 
     def convert_time(self, event):
         """Return the converted value and new unit."""
@@ -425,8 +413,6 @@ class Application(Frame):
     def volume(self):
         """Call the convert_window function and send the identity data"""
         self.convert_window("Volume", "cubic decimeters", ["acre foot", "barrels", "bushels(UK)", "bushels(US)", "centiliters", "cubic centimeters", "cubic decameters", "cubic decimeters", "cubic feet", "cubic inches", "cubic kilometers", "cubic meters", "cubic mile", "cubic millimeters", "cubic yards", "cups", "deciliters", "dram", "dram(imperial)", "fluid ounces(US)", "fluid ounces(imperial)", "gallons(US,dry)", "gallons(US,liquid)", "gallons(imperial)", "gill(US)", "gill(imperial)", "liters", "liters(1901-1964)", "microliters", "milliliters", "nanoliters", "picoliters", "pints(US,dry)", "pints(US,liquid)", "pints(imperial)", "quarts(UK,dry)", "quarts(US,liquid)", "quarts(imperial)", "table spoons", "tea spoons"])
-        self.top.bind("<Key>", self.convert_volume)
-        self.dropdown.bind("<<ComboboxSelected>>", self.convert_volume)
 
     def convert_volume(self, event):
         """Return the converted value and new unit."""
